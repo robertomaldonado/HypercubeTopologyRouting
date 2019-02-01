@@ -1,2 +1,3 @@
-./executable
+executable
+executable.dSYM
 .vscode
