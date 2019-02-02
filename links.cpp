@@ -13,8 +13,9 @@ using namespace std;
 
 int dim_order_routing(int src, int dst, int *path); /* return path length */
 int allpath_routing(int src, int dst, int allpath[MAX_PATH][MAXZ_PATH_LEN]); /* return number of paths */
-void print_binary_map( map<int, vector<int> > & nodes_map, int n_size);
-void create_map( map<int, vector<int> > & nodes_map , int n_size);
+string map_to_bin_str(map<int, vector<int> > &, int);
+void create_map(map<int, vector<int> > &, int);
+string int_to_bin_str(int, int);
 
 int main(int argc, char * argv[]){
     //Check arguments for right input
@@ -28,25 +29,55 @@ int main(int argc, char * argv[]){
     map<int, vector<int> > nodes_map;
     create_map( nodes_map , n_size);
     
-    print_binary_map( nodes_map, n_size);
+    cout << map_to_bin_str( nodes_map, n_size);
 
     return 0;
 }
 
-void print_binary_map(map<int, vector<int> > &nodes_map , int n_size){
-
+std::string map_to_bin_str(map<int, vector<int> > &nodes_map , int n_size){
+    int bit_size = log2(n_size); //Stores how many bits long is each node 
+    string output = "";
+    //For each node in the map, print it with the corresponding neighbors
     for(std::map<int,vector<int> >::iterator nodes_map_it = nodes_map.begin(); nodes_map_it != nodes_map.end(); ++nodes_map_it){
-        //Print the node id
-        bitConversion( log2(n_size), nodes_map_it->first);
-        cout << ": ";
-        //Print the neighbors
+        //Print the current node in binary
+        output += int_to_bin_str( bit_size, nodes_map_it->first);
+        output += ": ";
+        //Print the neighbors in binary of the current node
         for( std::vector<int>::iterator nei_it = nodes_map_it->second.begin(); nei_it != nodes_map_it->second.end(); ++nei_it){
-            bitConversion( log2(n_size), *nei_it);
+            output += int_to_bin_str( bit_size, *nei_it);
             if(nei_it+1 != nodes_map_it->second.end() )
-                cout<<" ";
+                output += " ";
         }
-        cout << endl;
+        output += "\n";
     }
+    return output;
+}
+
+string int_to_bin_str(int bit_size, int node){
+    int tmp_count = 0;
+    vector<bool> node_bits;
+    string output_str = "";
+    output_str += std::to_string(node) + "(";
+    //Keep adding the bits based on the parity of bits
+    while(node != 0){
+        if( (node % 2) == 0 ){
+            node_bits.push_back(0); node = floor(node/2);
+        }else{
+            node_bits.push_back(1); node = floor(node/2);
+        }
+    }
+    //Push into the vector of node_bits
+    tmp_count = node_bits.size();
+    while(  tmp_count < bit_size ){
+        node_bits.push_back(0);
+        tmp_count++;
+    }
+    //Add the bits to the output string
+    for(int i = node_bits.size()-1; i >= 0; i--)
+        output_str += std::to_string(node_bits[i]);
+    output_str += ")";
+
+    return output_str;
 }
 
 void create_map(  map<int, vector<int> > &nodes_map , int n_size){
