@@ -1,3 +1,4 @@
 executable
 executable.dSYM
 .vscode
+out.txt
