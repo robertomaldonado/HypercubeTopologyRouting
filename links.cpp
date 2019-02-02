@@ -27,32 +27,20 @@ int main(int argc, char * argv[]){
     //Create a vector to hold a binary representation
     map<int, vector<int> > nodes_map;
     create_map( nodes_map , n_size);
-
-    print_binary_map(nodes_map, n_size);
-    // for(auto nodes_map_it = nodes_map.begin(); nodes_map_it != nodes_map.end(); ++nodes_map_it){
-    //     //Print the node id
-    //     bitConversion( log2(n_size), nodes_map_it->first);
-    //     cout << ": ";
-    //     //Print the neighbors
-    //     for(auto nei_it = nodes_map_it->second.begin(); nei_it != nodes_map_it->second.end(); ++nei_it){
-    //         bitConversion( log2(n_size), *nei_it);
-    //         if(nei_it+1 != nodes_map_it->second.end() )
-    //             cout<<" ";
-    //     }
-    //     cout << endl;
-    // }
+    
+    print_binary_map( nodes_map, n_size);
 
     return 0;
 }
 
-void print_map(map<int, vector<int> > &nodes_map , int n_size){
+void print_binary_map(map<int, vector<int> > &nodes_map , int n_size){
 
-    for(auto nodes_map_it = nodes_map.begin(); nodes_map_it != nodes_map.end(); ++nodes_map_it){
+    for(std::map<int,vector<int> >::iterator nodes_map_it = nodes_map.begin(); nodes_map_it != nodes_map.end(); ++nodes_map_it){
         //Print the node id
         bitConversion( log2(n_size), nodes_map_it->first);
         cout << ": ";
         //Print the neighbors
-        for(auto nei_it = nodes_map_it->second.begin(); nei_it != nodes_map_it->second.end(); ++nei_it){
+        for( std::vector<int>::iterator nei_it = nodes_map_it->second.begin(); nei_it != nodes_map_it->second.end(); ++nei_it){
             bitConversion( log2(n_size), *nei_it);
             if(nei_it+1 != nodes_map_it->second.end() )
                 cout<<" ";
