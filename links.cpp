@@ -13,8 +13,9 @@ using namespace std;
 
 int dim_order_routing(int src, int dst, int *path); /* return path length */
 int allpath_routing(int src, int dst, int allpath[MAX_PATH][MAXZ_PATH_LEN]); /* return number of paths */
-void print_binary_map( map<int, vector<int> > & nodes_map, int n_size);
-void create_map( map<int, vector<int> > & nodes_map , int n_size);
+void print_binary_map(map<int, vector<int> > &, int);
+void create_map(map<int, vector<int> > &, int);
+void bitConversion(int, int);
 
 int main(int argc, char * argv[]){
     //Check arguments for right input
@@ -34,19 +35,43 @@ int main(int argc, char * argv[]){
 }
 
 void print_binary_map(map<int, vector<int> > &nodes_map , int n_size){
-
+    int bit_size = log2(n_size); //Stores how many bits long is each node 
+    //For each node in the map, print it with the corresponding neighbors
     for(std::map<int,vector<int> >::iterator nodes_map_it = nodes_map.begin(); nodes_map_it != nodes_map.end(); ++nodes_map_it){
-        //Print the node id
-        bitConversion( log2(n_size), nodes_map_it->first);
+        //Print the current node in binary
+        bitConversion( bit_size, nodes_map_it->first);
         cout << ": ";
-        //Print the neighbors
+        //Print the neighbors in binary of the current node
         for( std::vector<int>::iterator nei_it = nodes_map_it->second.begin(); nei_it != nodes_map_it->second.end(); ++nei_it){
-            bitConversion( log2(n_size), *nei_it);
+            bitConversion( bit_size, *nei_it);
             if(nei_it+1 != nodes_map_it->second.end() )
                 cout<<" ";
         }
         cout << endl;
     }
+}
+
+void bitConversion(int bit_size, int node){
+    vector<bool> node_bits;
+    cout << node << "(";
+    while(node != 0){
+        if( (node % 2) == 0 ){
+            node_bits.push_back(0);
+            node = floor(node/2);
+        }else{
+            node_bits.push_back(1);
+            node = floor(node/2);
+        }
+    }
+    int my_var = node_bits.size();
+    while(  my_var < bit_size){
+        node_bits.push_back(0);
+        my_var++;
+    }
+    for(int i = node_bits.size()-1; i >= 0; i--)
+        cout << node_bits[i];
+
+    cout << ")";
 }
 
 void create_map(  map<int, vector<int> > &nodes_map , int n_size){
