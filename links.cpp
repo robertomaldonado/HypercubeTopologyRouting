@@ -15,21 +15,12 @@ int dim_order_routing(int src, int dst, int *path); /* return path length */
 int allpath_routing(int src, int dst, int allpath[MAX_PATH][MAXZ_PATH_LEN]); /* return number of paths */
 
 int main(int argc, char * argv[]){
-    //Check for correct call by user
-    if(argc < 2 || argCorrect(argc) == 0){
-        cout << "Usage: ./executable Nsize [dim/all]" << endl;
-        return 1;
-    }
-
-    //Get the n_size requested by user
+    //Check arguments for right input
+    if ( !isArgCountCorrect ( argc ) ) return 1;
     int n_size = std::stoi(argv[1]);
+    if ( !isPowerOfTwo(n_size) ) return 1;
     string routing_model = argv[2];
-
-    //Check if the parameter is a power of 2
-    if ( !(ceil(log2(n_size)) == floor(log2(n_size))) ){
-        cout << "Error: Nsize must be a power of 2 for hypercube." << endl;
-        return 1;
-    }
+    if ( !isValidOption(routing_model) ) return 1;
 
     //Create a vector to hold a binary representation
     vector<int> vector_nodes;
