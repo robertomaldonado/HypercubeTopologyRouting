@@ -2,3 +2,4 @@ executable
 executable.dSYM
 .vscode
 out.txt
+test_code/
