@@ -27,11 +27,46 @@ int main(int argc, char * argv[]){
 
     //Create a vector to hold a binary representation
     map<int, vector<int> > nodes_map;
+
     create_map( nodes_map , n_size);
     
     cout << map_to_bin_str( nodes_map, n_size);
 
+    //TO-DO: Get source and destination from the console*/
+    int source = 1;
+    int destination = 31;
+    int path = 10;
+
+    if( routing_model == "dim" ){
+
+        int len = dim_order_routing(source, destination, &path );
+        cout<<"Dimensional order routing" <<endl;
+        cout<< "input src dst : ";
+
+        if( (source > (n_size - 1)) ||  (destination > (n_size - 1)) ){
+            cout<<"dim_order_routing: src " << source << ", dst " << destination;
+            cout << ", out of bound 0.."<< n_size << endl;
+        }
+    }else if(routing_model == "all"){
+
+        // int len = dim_order_routing(source, destination, &path );
+        // int allpath[MAX_PATH][MAXZ_PATH_LEN];
+        // int allpath_routing(source, destination, allpath);
+        cout<<"All shortest path routing" <<endl;
+        cout<< "input src dst : ";
+
+        if( (source > (n_size - 1)) ||  (destination > (n_size - 1)) ){
+            cout<<"dim_order_routing: src " << source << ", dst " << destination;
+            cout << ", out of bound 0.."<< n_size << endl;
+        }
+    }
+
     return 0;
+}
+
+int dim_order_routing( int source, int destination, int *path ){
+    int length = 10;
+    return length;
 }
 
 std::string map_to_bin_str(map<int, vector<int> > &nodes_map , int n_size){
@@ -53,6 +88,8 @@ std::string map_to_bin_str(map<int, vector<int> > &nodes_map , int n_size){
     return output;
 }
 
+// Receives the bits needed and an integer value to convert
+// Returns string in format #(000...) 
 string int_to_bin_str(int bit_size, int node){
     int tmp_count = 0;
     vector<bool> node_bits;
@@ -80,6 +117,8 @@ string int_to_bin_str(int bit_size, int node){
     return output_str;
 }
 
+// Receives ref  to the map, and the size
+// Creates the map by reference 
 void create_map(  map<int, vector<int> > &nodes_map , int n_size){
 
     vector<int> vector_nodes;
