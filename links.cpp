@@ -27,14 +27,13 @@ int main(int argc, char * argv[]){
 
     //Create a vector to hold a binary representation
     map<int, vector<int> > nodes_map;
-
     create_map( nodes_map , n_size);
     
     cout << map_to_bin_str( nodes_map, n_size);
 
     //TO-DO: Get source and destination from the console*/
     int source = 1;
-    int destination = 31;
+    int destination = 6;
     int path = 10;
 
     if( routing_model == "dim" ){
