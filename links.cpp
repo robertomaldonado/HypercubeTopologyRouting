@@ -5,6 +5,7 @@
 #import <vector>
 #import <map>
 #include "checker.h"
+#include "transformations.h"
 
 int MAX_PATH = 200;
 int MAXZ_PATH_LEN = 200;
@@ -42,10 +43,39 @@ int main(int argc, char * argv[]){
         cout<<"Dimensional order routing" <<endl;
         cout<< "input src dst : ";
 
+        int bits_to_change =  source^destination;
+
+        vector<bool> vector_src = int_to_bin_vector( log2(n_size), source);
+        vector<bool> xor_guide = int_to_bin_vector( log2(n_size), bits_to_change);
+        vector<int> dim_ord_route;
+        int current;
+        for(int i = 0 ; i < xor_guide.size() ; i++){
+        
+            cout<< std::to_string(xor_guide[i]);
+            if(xor_guide[i]) {
+                // bit_count++;
+                vector_src[i] = !vector_src[i];
+                current = bin_vector_to_int( log2(n_size), vector_src);
+                // cout << "storing: " << current<<endl;
+                dim_ord_route.push_back( current );
+            }
+
+        }
+        cout << endl;
+        // cout << "Different bits count: " << bit_count << endl;
+        // cout << bits_to_change <<endl;
+
+        cout << "Route: " ;
+        for(int i = 0 ; i < dim_ord_route.size() ; i++){
+            cout << dim_ord_route[i];
+        }
+
+
         if( (source > (n_size - 1)) ||  (destination > (n_size - 1)) ){
             cout<<"dim_order_routing: src " << source << ", dst " << destination;
             cout << ", out of bound 0.."<< n_size << endl;
         }
+
     }else if(routing_model == "all"){
 
         // int len = dim_order_routing(source, destination, &path );
