@@ -8,11 +8,11 @@ CFLAG=-g -Wall
 all: compile_all
 
 compile_all: 
-	$(CC) $(CFLAG) -o executable links.cpp checker.cpp
+	$(CC) $(CFLAG) -o executable links.cpp checker.cpp transformations.cpp
 
 clean:
 	rm executable
 
 run_links:
 	make
-	./executable 8 dim
+	./executable 32 dim
