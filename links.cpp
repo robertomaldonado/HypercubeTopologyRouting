@@ -5,6 +5,7 @@
 #import <vector>
 #import <map>
 #include "checker.h"
+#include "transformations.h"
 
 int MAX_PATH = 200;
 int MAXZ_PATH_LEN = 200;
@@ -31,55 +32,76 @@ int main(int argc, char * argv[]){
     
     cout << map_to_bin_str( nodes_map, n_size);
 
+    //TO-DO: Get source and destination from the console*/
+    int source = 1;
+    int destination = 30;
+    int path = 10;
+
+    if( routing_model == "dim" ){
+
+        int len = dim_order_routing(source, destination, &path );
+        cout<<"Dimensional order routing" <<endl;
+        while(1){
+            cout<< "input src dst : ";
+            cin >> source;
+            cin >> destination; 
+
+            int bits_to_change =  source^destination;
+
+            vector<bool> vector_src = int_to_bin_vector( log2(n_size), source);
+            vector<bool> xor_guide = int_to_bin_vector( log2(n_size), bits_to_change);
+            vector<int> dim_ord_route;
+            int current;
+            dim_ord_route.push_back( source );
+
+            for(int i = 0 ; i < xor_guide.size() ; i++){
+                // cout<< std::to_string(xor_guide[i]);
+                if(xor_guide[i]) {
+                    vector_src[i] = !vector_src[i];
+                    current = bin_vector_to_int( log2(n_size), vector_src);
+                    dim_ord_route.push_back( current );
+                }
+            }
+            cout<< "path from " << source << " to " << destination << ": ";
+
+            for(int i = 0 ; i < dim_ord_route.size() ; i++){
+                cout << int_to_bin_str(log2(n_size), dim_ord_route[i]);
+                if( i+1 != dim_ord_route.size() )
+                    cout << "->";
+                else
+                    cout << endl; 
+            }
+
+            if( (source > (n_size - 1)) ||  (destination > (n_size - 1)) ){
+                cout<<"dim_order_routing: src " << source << ", dst " << destination;
+                cout << ", out of bound 0.."<< n_size << endl;
+            }
+        }
+
+    }else if(routing_model == "all"){
+
+        // int len = dim_order_routing(source, destination, &path );
+        // int allpath[MAX_PATH][MAXZ_PATH_LEN];
+        // int allpath_routing(source, destination, allpath);
+        cout<<"All shortest path routing" <<endl;
+        cout<< "input src dst : ";
+
+        if( (source > (n_size - 1)) ||  (destination > (n_size - 1)) ){
+            cout<<"dim_order_routing: src " << source << ", dst " << destination;
+            cout << ", out of bound 0.."<< n_size << endl;
+        }
+    }
+
     return 0;
 }
 
-std::string map_to_bin_str(map<int, vector<int> > &nodes_map , int n_size){
-    int bit_size = log2(n_size); //Stores how many bits long is each node 
-    string output = "";
-    //For each node in the map, print it with the corresponding neighbors
-    for(std::map<int,vector<int> >::iterator nodes_map_it = nodes_map.begin(); nodes_map_it != nodes_map.end(); ++nodes_map_it){
-        //Print the current node in binary
-        output += int_to_bin_str( bit_size, nodes_map_it->first);
-        output += ": ";
-        //Print the neighbors in binary of the current node
-        for( std::vector<int>::iterator nei_it = nodes_map_it->second.begin(); nei_it != nodes_map_it->second.end(); ++nei_it){
-            output += int_to_bin_str( bit_size, *nei_it);
-            if(nei_it+1 != nodes_map_it->second.end() )
-                output += " ";
-        }
-        output += "\n";
-    }
-    return output;
+int dim_order_routing( int source, int destination, int *path ){
+    int length = 10;
+    return length;
 }
 
-string int_to_bin_str(int bit_size, int node){
-    int tmp_count = 0;
-    vector<bool> node_bits;
-    string output_str = "";
-    output_str += std::to_string(node) + "(";
-    //Keep adding the bits based on the parity of bits
-    while(node != 0){
-        if( (node % 2) == 0 ){
-            node_bits.push_back(0); node = floor(node/2);
-        }else{
-            node_bits.push_back(1); node = floor(node/2);
-        }
-    }
-    //Push into the vector of node_bits
-    tmp_count = node_bits.size();
-    while(  tmp_count < bit_size ){
-        node_bits.push_back(0);
-        tmp_count++;
-    }
-    //Add the bits to the output string
-    for(int i = node_bits.size()-1; i >= 0; i--)
-        output_str += std::to_string(node_bits[i]);
-    output_str += ")";
-
-    return output_str;
-}
-
+// Receives ref  to the map, and the size
+// Creates the map by reference 
 void create_map(  map<int, vector<int> > &nodes_map , int n_size){
 
     vector<int> vector_nodes;
