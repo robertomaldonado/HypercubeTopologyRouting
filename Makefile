@@ -8,7 +8,7 @@ CFLAG=-g -Wall
 all: compile_all
 
 compile_all: 
-	$(CC) $(CFLAG) -o executable links.cpp checker.cpp
+	$(CC) $(CFLAG) -o executable links.cpp checker.cpp transformations.cpp
 
 clean:
 	rm executable

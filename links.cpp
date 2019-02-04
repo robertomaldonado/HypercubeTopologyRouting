@@ -68,54 +68,6 @@ int dim_order_routing( int source, int destination, int *path ){
     return length;
 }
 
-std::string map_to_bin_str(map<int, vector<int> > &nodes_map , int n_size){
-    int bit_size = log2(n_size); //Stores how many bits long is each node 
-    string output = "";
-    //For each node in the map, print it with the corresponding neighbors
-    for(std::map<int,vector<int> >::iterator nodes_map_it = nodes_map.begin(); nodes_map_it != nodes_map.end(); ++nodes_map_it){
-        //Print the current node in binary
-        output += int_to_bin_str( bit_size, nodes_map_it->first);
-        output += ": ";
-        //Print the neighbors in binary of the current node
-        for( std::vector<int>::iterator nei_it = nodes_map_it->second.begin(); nei_it != nodes_map_it->second.end(); ++nei_it){
-            output += int_to_bin_str( bit_size, *nei_it);
-            if(nei_it+1 != nodes_map_it->second.end() )
-                output += " ";
-        }
-        output += "\n";
-    }
-    return output;
-}
-
-// Receives the bits needed and an integer value to convert
-// Returns string in format #(000...) 
-string int_to_bin_str(int bit_size, int node){
-    int tmp_count = 0;
-    vector<bool> node_bits;
-    string output_str = "";
-    output_str += std::to_string(node) + "(";
-    //Keep adding the bits based on the parity of bits
-    while(node != 0){
-        if( (node % 2) == 0 ){
-            node_bits.push_back(0); node = floor(node/2);
-        }else{
-            node_bits.push_back(1); node = floor(node/2);
-        }
-    }
-    //Push into the vector of node_bits
-    tmp_count = node_bits.size();
-    while(  tmp_count < bit_size ){
-        node_bits.push_back(0);
-        tmp_count++;
-    }
-    //Add the bits to the output string
-    for(int i = node_bits.size()-1; i >= 0; i--)
-        output_str += std::to_string(node_bits[i]);
-    output_str += ")";
-
-    return output_str;
-}
-
 // Receives ref  to the map, and the size
 // Creates the map by reference 
 void create_map(  map<int, vector<int> > &nodes_map , int n_size){
