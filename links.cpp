@@ -34,46 +34,48 @@ int main(int argc, char * argv[]){
 
     //TO-DO: Get source and destination from the console*/
     int source = 1;
-    int destination = 6;
+    int destination = 30;
     int path = 10;
 
     if( routing_model == "dim" ){
 
         int len = dim_order_routing(source, destination, &path );
         cout<<"Dimensional order routing" <<endl;
-        cout<< "input src dst : ";
+        while(1){
+            cout<< "input src dst : ";
+            cin >> source;
+            cin >> destination; 
 
-        int bits_to_change =  source^destination;
+            int bits_to_change =  source^destination;
 
-        vector<bool> vector_src = int_to_bin_vector( log2(n_size), source);
-        vector<bool> xor_guide = int_to_bin_vector( log2(n_size), bits_to_change);
-        vector<int> dim_ord_route;
-        int current;
-        for(int i = 0 ; i < xor_guide.size() ; i++){
-        
-            cout<< std::to_string(xor_guide[i]);
-            if(xor_guide[i]) {
-                // bit_count++;
-                vector_src[i] = !vector_src[i];
-                current = bin_vector_to_int( log2(n_size), vector_src);
-                // cout << "storing: " << current<<endl;
-                dim_ord_route.push_back( current );
+            vector<bool> vector_src = int_to_bin_vector( log2(n_size), source);
+            vector<bool> xor_guide = int_to_bin_vector( log2(n_size), bits_to_change);
+            vector<int> dim_ord_route;
+            int current;
+            dim_ord_route.push_back( source );
+
+            for(int i = 0 ; i < xor_guide.size() ; i++){
+                // cout<< std::to_string(xor_guide[i]);
+                if(xor_guide[i]) {
+                    vector_src[i] = !vector_src[i];
+                    current = bin_vector_to_int( log2(n_size), vector_src);
+                    dim_ord_route.push_back( current );
+                }
+            }
+            cout<< "path from " << source << " to " << destination << ": ";
+
+            for(int i = 0 ; i < dim_ord_route.size() ; i++){
+                cout << int_to_bin_str(log2(n_size), dim_ord_route[i]);
+                if( i+1 != dim_ord_route.size() )
+                    cout << "->";
+                else
+                    cout << endl; 
             }
 
-        }
-        cout << endl;
-        // cout << "Different bits count: " << bit_count << endl;
-        // cout << bits_to_change <<endl;
-
-        cout << "Route: " ;
-        for(int i = 0 ; i < dim_ord_route.size() ; i++){
-            cout << dim_ord_route[i];
-        }
-
-
-        if( (source > (n_size - 1)) ||  (destination > (n_size - 1)) ){
-            cout<<"dim_order_routing: src " << source << ", dst " << destination;
-            cout << ", out of bound 0.."<< n_size << endl;
+            if( (source > (n_size - 1)) ||  (destination > (n_size - 1)) ){
+                cout<<"dim_order_routing: src " << source << ", dst " << destination;
+                cout << ", out of bound 0.."<< n_size << endl;
+            }
         }
 
     }else if(routing_model == "all"){
