@@ -157,7 +157,6 @@ void recursive_flip( vector<bool> vector_src, vector<bool> vector_dst, vector<bo
     current_xor = int_to_bin_vector(bits_for_node, c);
 
     if( c == 0 ){
-        count++;
         cout << "Restart.."<<endl;
         a = bin_vector_to_int(bits_for_node, vector_src);
         vector_src = vector_original;
