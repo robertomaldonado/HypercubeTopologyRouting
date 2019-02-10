@@ -20,6 +20,8 @@ string map_to_bin_str(map<int, vector<int> > &, int);
 void create_map(map<int, vector<int> > &);
 string int_to_bin_str(int, int);
 int factorial(int);
+void print_single_route(int, vector<int> &);
+void print_multiple_routes( map<int, vector<int> > &);
 // int recursive_flip( vector<bool>, vector<bool> );
 
 int main(int argc, char * argv[]){
@@ -29,28 +31,23 @@ int main(int argc, char * argv[]){
     if ( !isPowerOfTwo(total_nodes) ) return 1;
     string routing_model = argv[2];
     if ( !isValidOption(routing_model) ) return 1;
-
     bits_for_node = log2(total_nodes);
 
     //Create a vector to hold a binary representation
     map<int, vector<int> > nodes_map;
     create_map( nodes_map );
-    
-    cout << map_to_bin_str( nodes_map, total_nodes);
+    printf("%s", map_to_bin_str( nodes_map, total_nodes).c_str() );
 
     //TO-DO: Get source and destination from the console*/
-    int source = 1;
-    int destination = 30;
-    int path = 10;
+    int source = 1, destination = 30, path = 10;
 
     if( routing_model == "dim" ){
 
         int len = dim_order_routing(source, destination, &path );
-        cout<<"Dimensional order routing" <<endl;
+        printf("Dimensional order routing\n");
         while(1){
-            cout<< "input src dst : ";
-            cin >> source;
-            cin >> destination; 
+            printf("input src dst : ");
+            cin >> source; cin >> destination; 
 
             int bits_to_change =  source^destination;
 
@@ -61,39 +58,29 @@ int main(int argc, char * argv[]){
             dim_ord_route.push_back( source );
 
             for(int i = 0 ; i < xor_guide.size() ; i++){
-                // cout<< std::to_string(xor_guide[i]);
                 if(xor_guide[i]) {
                     vector_src[i] = !vector_src[i];
                     current = bin_vector_to_int( bits_for_node, vector_src);
                     dim_ord_route.push_back( current );
                 }
             }
-            cout<< "path from " << source << " to " << destination << ": ";
-
-            for(int i = 0 ; i < dim_ord_route.size() ; i++){
-                cout << int_to_bin_str(bits_for_node, dim_ord_route[i]);
-                if( i+1 != dim_ord_route.size() )
-                    cout << "->";
-                else
-                    cout << endl; 
-            }
-
-            if( (source > (total_nodes - 1)) ||  (destination > (total_nodes - 1)) ){
-                cout<<"dim_order_routing: src " << source << ", dst " << destination;
-                cout << ", out of bound 0.."<< total_nodes << endl;
-            }
+            printf("path from %d to %d: ", source, destination);
+            print_single_route(bits_for_node, dim_ord_route);
+        
+            if( (source > (total_nodes - 1)) ||  (destination > (total_nodes - 1)) )
+                printf( "dim_order_routing: src %d, dst %d, out of bound 0..%d",
+                source, destination, total_nodes);
         }
 
     }else if(routing_model == "all"){
 
         // int allpath[MAX_PATH][MAXZ_PATH_LEN];
         // int allpath_routing(source, destination, allpath);
-        cout<<"All shortest path routing" <<endl;
+        printf("All shortest path routing\n");
 
         while(1){
-            cout<< "input src dst : ";
-            cin >> source;
-            cin >> destination; 
+            printf("input src dst : ");
+            cin >> source; cin >> destination;  
 
             //XOR to get a get a guide on which bits need to be changed
             int bits_to_change =  source^destination;
@@ -111,7 +98,6 @@ int main(int argc, char * argv[]){
             //For each  bit changed on on the guide, flip the bit
             //This should be recursive
             
-
             for(int i = 0 ; i < xor_guide.size() ; i++){
                 //000 to 011
                 // 000, 001, 011 //xored is 010
@@ -125,40 +111,40 @@ int main(int argc, char * argv[]){
             }
 
             paths_map[ 0 ] = all_ord_route;
-            // paths_map.insert(0, all_ord_route);
+            paths_map[ 1 ] = all_ord_route;
+
             map<int, vector<int> >::iterator it = paths_map.begin();
             int counter = 0;
             for (int i = 0; i < xor_guide.size(); i++ )
                 if( xor_guide[i] )
                     counter++;
 
-            int routes = factorial(counter);
-            cout<< routes << " shortest paths from " << source << " to " << destination << ": " <<endl;
-            
-            for(int k=0; k < paths_map.size(); k++){ //Print the route
-                cout << "path " << k << ": ";
-                for(int i = 0 ; i < all_ord_route.size() ; i++){
-                    cout << int_to_bin_str(bits_for_node, all_ord_route[i]);
-                    if( i+1 != all_ord_route.size() )
-                        cout << "->";
-                    else
-                        cout << endl; 
-                }
-            }
+            printf("%d shortest paths from %d to %d: \n", factorial(counter), source, destination);
+            print_multiple_routes(paths_map);
 
-            if( (source > (total_nodes - 1)) ||  (destination > (total_nodes - 1)) ){
-                cout<<"dim_order_routing: src " << source << ", dst " << destination;
-                cout << ", out of bound 0.."<< total_nodes << endl;
-            }
-        }
-        
-        if( (source > (total_nodes - 1)) ||  (destination > (total_nodes - 1)) ){
-            cout<<"dim_order_routing: src " << source << ", dst " << destination;
-            cout << ", out of bound 0.."<< total_nodes << endl;
+            if( (source > (total_nodes - 1)) ||  (destination > (total_nodes - 1)) )
+                printf( "dim_order_routing: src %d, dst %d, out of bound 0..%d",
+                source, destination, total_nodes);
         }
     }
-
     return 0;
+}
+
+void print_multiple_routes( map<int, vector<int> > & mp) {
+    for(int k=0; k < mp.size(); k++){ //Print the route
+        printf("path %d : ", k);
+        print_single_route(bits_for_node, mp[k]);
+    }
+}
+
+void print_single_route(int bits_for_node, vector<int> &ref_to_route){
+    for(int i = 0 ; i < ref_to_route.size() ; i++){
+        printf( int_to_bin_str(bits_for_node, ref_to_route[i]).c_str() );
+        if( i+1 != ref_to_route.size() )
+            printf("->");
+        else
+            printf("\n");
+    }
 }
 
 //I am returning the number of the new xor
