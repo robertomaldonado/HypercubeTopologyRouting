@@ -15,4 +15,4 @@ clean:
 
 run_links:
 	make
-	./executable 32 dim
+	./executable 4 all

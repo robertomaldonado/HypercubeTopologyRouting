@@ -3,3 +3,7 @@ executable.dSYM
 .vscode
 out.txt
 test_code/*.*
+test_code/*
+test_code/
+test_code
+adj/
