@@ -22,7 +22,8 @@ string int_to_bin_str(int, int);
 int factorial(int);
 void print_single_route(int, vector<int> &);
 void print_multiple_routes( map<int, vector<int> > &);
-// int recursive_flip( vector<bool>, vector<bool> );
+void recursive_flip( vector<bool>, vector<bool>, vector<bool>);
+
 
 int main(int argc, char * argv[]){
     //Check arguments for right input
@@ -43,7 +44,7 @@ int main(int argc, char * argv[]){
 
     if( routing_model == "dim" ){
 
-        int len = dim_order_routing(source, destination, &path );
+        // int len = dim_order_routing(source, destination, &path );
         printf("Dimensional order routing\n");
         while(1){
             printf("input src dst : ");
@@ -67,9 +68,11 @@ int main(int argc, char * argv[]){
             printf("path from %d to %d: ", source, destination);
             print_single_route(bits_for_node, dim_ord_route);
         
-            if( (source > (total_nodes - 1)) ||  (destination > (total_nodes - 1)) )
+            if( (source > (total_nodes - 1)) ||  (destination > (total_nodes - 1)) ){
                 printf( "dim_order_routing: src %d, dst %d, out of bound 0..%d",
                 source, destination, total_nodes);
+                return 1;
+            }
         }
 
     }else if(routing_model == "all"){
@@ -86,6 +89,7 @@ int main(int argc, char * argv[]){
             int bits_to_change =  source^destination;
             //Convert source and guide to vector of bits
             vector<bool> vector_src = int_to_bin_vector( bits_for_node, source);
+            vector<bool> vector_dst = int_to_bin_vector( bits_for_node, destination);
             vector<bool> xor_guide = int_to_bin_vector( bits_for_node, bits_to_change);
             vector<int> all_ord_route;
             //The structure of neighbors is hold in a map.
@@ -96,19 +100,7 @@ int main(int argc, char * argv[]){
             //The source is the first node
             all_ord_route.push_back( source );
             //For each  bit changed on on the guide, flip the bit
-            //This should be recursive
-            
-            for(int i = 0 ; i < xor_guide.size() ; i++){
-                //000 to 011
-                // 000, 001, 011 //xored is 010
-                // 000, 010, 011 //xored is 001
-                if(xor_guide[i]) { //If the bits need to be flipped
-                    vector_src[i] = !vector_src[i]; //Flip a bit
-                    //Convert and add to the route
-                    current = bin_vector_to_int( bits_for_node, vector_src);
-                    all_ord_route.push_back( current );
-                }
-            }
+            recursive_flip(vector_src, vector_dst, xor_guide);
 
             paths_map[ 0 ] = all_ord_route;
             paths_map[ 1 ] = all_ord_route;
@@ -122,9 +114,11 @@ int main(int argc, char * argv[]){
             printf("%d shortest paths from %d to %d: \n", factorial(counter), source, destination);
             print_multiple_routes(paths_map);
 
-            if( (source > (total_nodes - 1)) ||  (destination > (total_nodes - 1)) )
+            if( (source > (total_nodes - 1)) ||  (destination > (total_nodes - 1)) ){
                 printf( "dim_order_routing: src %d, dst %d, out of bound 0..%d",
                 source, destination, total_nodes);
+                return 1;
+            }
         }
     }
     return 0;
@@ -148,20 +142,53 @@ void print_single_route(int bits_for_node, vector<int> &ref_to_route){
 }
 
 //I am returning the number of the new xor
-// int recursive_flip( vector<bool> curent_xor, vector<bool> vector_dst){
-//     int current;
-//     for(int i = 0 ; i < xor_guide.size() ; i++){
-//         //000 to 011
-//         // 000, 001, 011 //xored is 010
-//         // 000, 010, 011 //xored is 001
-//         if(xor_guide[i]) { //If the bits need to be flipped
-//             vector_src[i] = !vector_src[i]; //Flip a bit
-//             //Convert and add to the route
-//             current = bin_vector_to_int( bits_for_node, vector_src);
-//             // all_ord_route.push_back( current );
-//         }
-//     }
-// }
+void recursive_flip( vector<bool> vector_src, vector<bool> vector_dst, vector<bool> current_xor){
+    int current;
+    vector<bool> vector_original = vector_src;
+        //000 to 011
+        // 000, 001, 011 //xored is 010
+        // 000, 010, 011 //xored is 000
+    current = bin_vector_to_int( bits_for_node, vector_src);
+    cout << "Currently at node:  " << current << endl;
+
+    int a = bin_vector_to_int(bits_for_node, vector_src);
+    int b = bin_vector_to_int(bits_for_node, vector_dst);
+    int c = a^b;
+    current_xor = int_to_bin_vector(bits_for_node, c);
+
+    if( c == 0 ){
+        count++;
+        cout << "Restart.."<<endl;
+        a = bin_vector_to_int(bits_for_node, vector_src);
+        vector_src = vector_original;
+        vector_src = int_to_bin_vector(bits_for_node, 0);
+        c = a^b;
+        current_xor = int_to_bin_vector(bits_for_node, c);
+    }
+
+    for(int i = 0 ; i < current_xor.size() ; i++){
+
+        if(current_xor[i]) { //If the bits need to be flipped
+                // current = bin_vector_to_int( bits_for_node, vector_src);
+                // cout << "..." << current << endl;
+                // current = bin_vector_to_int( bits_for_node, vector_src);
+                // cout << "Currently at node:  " << current << endl;
+
+                // int a = bin_vector_to_int(bits_for_node, vector_src);
+                // int b = bin_vector_to_int(bits_for_node, vector_dst);
+                // int c = a^b;
+                // current_xor = int_to_bin_vector(bits_for_node, c);
+
+                vector_src[i] = !vector_src[i]; //Flip a bit
+                current = bin_vector_to_int( bits_for_node, vector_src);
+
+                cout << "Hop to node:  " << current << endl << endl;
+                // recursive_flip(vector_src, vector_dst, current_xor);
+                
+        }
+                // recursive_flip(vector_src, vector_dst, current_xor);     
+    }
+}
 
 int factorial(int n){
     int fact = 1;
