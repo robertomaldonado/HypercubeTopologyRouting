@@ -8,11 +8,11 @@ CFLAG=-g -Wall
 all: compile_all
 
 compile_all: 
-	$(CC) $(CFLAG) -o executable links.cpp checker.cpp transformations.cpp
+	$(CC) $(CFLAG) -o hypercubeRouting links.cpp checker.cpp transformations.cpp
 
 clean:
-	rm executable
+	rm hypercubeRouting
 
 run_links:
 	make
-	./executable 4 all
+	./hypercubeRouting 4 all

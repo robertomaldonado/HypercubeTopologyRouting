@@ -1,9 +1,2 @@
-executable
-executable.dSYM
+hypercubeRouting.dSYM
 .vscode
-out.txt
-test_code/*.*
-test_code/*
-test_code/
-test_code
-adj/
