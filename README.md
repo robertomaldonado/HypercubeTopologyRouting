@@ -18,6 +18,7 @@ The software prints the routing paths for packets based on dimension order singl
      all: Display all shortest path routing
 #### Example:  
      ./hypercubeRouting 4 dim
-    
-  has the following output:
-      .....
+ #### Will ask for:  
+     input src dst : (i.e. 0 3)  
+ #### Has the following output:
+     path from 0 to 3: 0(00)->1(01)->3(11)
